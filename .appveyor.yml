@@ -1,3 +1,4 @@
+
 image: Ubuntu  # образ для сборки
 
 stack: jdk 11  # версия JDK
@@ -6,13 +7,15 @@ branches:
   only:
     - master  # ветка git
 
-build: off  # для использования своего скрипта сборки
+build: off  # будем использовать свой скрипт сборки
 
 install:
-  # запуск SUT (& означает, что в фоновом режиме - не блокируется терминал для запуска тестов)
-  - java -jar ./artifacts/app-card-delivery.jar &
+  # запускаем SUT (запоминаем информацию о процессе в переменной $App)
+  - ps: $App = Start-Process -FilePath java -ArgumentList "-jar ./artifacts/app-ibank-build-for-testers.jar" -PassThru
 
 build_script:
-  - chmod +x gradlew #  предоставление прав на запуск файла gradlew
-  # запуск тестов, параметр -Dselenide.headless=true отключает графический интерфейс
-  - ./gradlew test -Dselenide.headless=true --info  # флаг --info позволяет выводить больше информации
+  - ps: chmod +x ./gradlew
+  - ps: ./gradlew test --info "-Dselenide.headless=true"  # стартуем Selenide в Headless-режиме
+
+on_finish:
+  - ps: Stop-Process -Id $App.Id  # останавливаем SUT
