@@ -15,7 +15,7 @@ install:
 
 build_script:
   - ps: chmod +x ./gradlew
-  - ps: ./gradlew test --info "-Dselenide.headless=true"  # стартуем Selenide в Headless-режиме
+  - ps: ./gradlew test --info "-Selenide.headless=true"  # стартуем Selenide в Headless-режиме
 
 on_finish:
   - ps: Stop-Process -Id $App.Id  # останавливаем SUT
